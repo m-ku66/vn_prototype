@@ -21,10 +21,17 @@ export type Choice = {
   routeEffects: Partial<Record<RouteType, number>>; // Which routes get affected and by how much
 };
 
-// Updated scene type to use Choice objects instead of strings
+// Individual dialogue slide/beat within a scene
+export type DialogueSlide = {
+  speaker?: string; // Character name, or undefined for narration
+  text: string; // The dialogue or narration text
+  choices?: Choice[]; // Optional choices - only present on slides that end with player decisions
+};
+
+// Updated scene type to support dialogue sequences
 export type Scene = {
   id: number;
   title: string;
-  description: string;
-  choices: Choice[]; // Now uses Choice objects instead of string[]
+  characters: string[]; // List of characters present in this scene (for UI/context)
+  slides: DialogueSlide[]; // Array of dialogue parts that play in sequence
 };
