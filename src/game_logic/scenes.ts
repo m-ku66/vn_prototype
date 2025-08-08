@@ -1,4 +1,4 @@
-import { Scene } from "src/types/gameTypes";
+import { Scene, Choice } from "../types/gameTypes";
 import { RouteType } from "./gameState";
 
 // Simple scene interface - no complex prerequisites needed
@@ -12,21 +12,56 @@ const mainStoryScenes: QueueScene[] = [
     id: 1,
     title: "Introduction",
     description: "Welcome to the game!",
-    choices: ["Start", "Exit"],
+    choices: [
+      {
+        text: "Start",
+        routeEffects: {}, // Neutral choice - no route effects
+      },
+      {
+        text: "Exit",
+        routeEffects: {}, // Neutral choice - no route effects
+      },
+    ],
     category: "main",
   },
   {
     id: 2,
     title: "Forest",
     description: "You are in a dark forest.",
-    choices: ["Go North", "Go South", "Do Nothing"],
+    choices: [
+      {
+        text: "Go North",
+        routeEffects: { action: 1 }, // Bold, decisive action
+      },
+      {
+        text: "Go South",
+        routeEffects: { mystery: 1 }, // Cautious, exploring unknown
+      },
+      {
+        text: "Do Nothing",
+        routeEffects: { friendship: 1 }, // Thoughtful, patient approach
+      },
+    ],
     category: "main",
   },
   {
     id: 3,
     title: "Village",
     description: "You arrive at a peaceful village.",
-    choices: ["Talk to villagers", "Visit the inn", "Continue traveling"],
+    choices: [
+      {
+        text: "Talk to villagers",
+        routeEffects: { friendship: 1 }, // Social, friendly interaction
+      },
+      {
+        text: "Visit the inn",
+        routeEffects: { romance: 1 }, // Could lead to romantic encounters
+      },
+      {
+        text: "Continue traveling",
+        routeEffects: { action: 1 }, // Keep moving, action-oriented
+      },
+    ],
     category: "main",
   },
 ];
@@ -36,14 +71,40 @@ const romanceScenes: QueueScene[] = [
     id: 101,
     title: "Romantic Picnic",
     description: "A special romantic moment under the stars.",
-    choices: ["Share a kiss", "Hold hands", "Talk about the future"],
+    choices: [
+      {
+        text: "Share a kiss",
+        routeEffects: { romance: 2 }, // Strong romantic choice
+      },
+      {
+        text: "Hold hands",
+        routeEffects: { romance: 1, friendship: 1 }, // Romantic but also friendship
+      },
+      {
+        text: "Talk about the future",
+        routeEffects: { romance: 1 }, // Romantic commitment
+      },
+    ],
     category: "romance",
   },
   {
     id: 102,
     title: "Love Confession",
     description: "The moment you've been building toward...",
-    choices: ["Accept", "Need more time", "Just friends"],
+    choices: [
+      {
+        text: "Accept",
+        routeEffects: { romance: 3 }, // Very strong romantic choice
+      },
+      {
+        text: "Need more time",
+        routeEffects: { friendship: 1, mystery: 1 }, // Cautious, keeps options open
+      },
+      {
+        text: "Just friends",
+        routeEffects: { friendship: 2, romance: -1 }, // Friendship boost, romance penalty
+      },
+    ],
     category: "romance",
   },
 ];
@@ -53,7 +114,20 @@ const friendshipScenes: QueueScene[] = [
     id: 201,
     title: "Campfire Stories",
     description: "Sharing tales and bonding over the fire.",
-    choices: ["Share a funny story", "Ask about their past", "Suggest games"],
+    choices: [
+      {
+        text: "Share a funny story",
+        routeEffects: { friendship: 2 }, // Strong friendship building
+      },
+      {
+        text: "Ask about their past",
+        routeEffects: { friendship: 1, mystery: 1 }, // Friendship with intrigue
+      },
+      {
+        text: "Suggest games",
+        routeEffects: { friendship: 1, action: 1 }, // Social fun with activity
+      },
+    ],
     category: "friendship",
   },
 ];
@@ -63,7 +137,20 @@ const mysteryScenes: QueueScene[] = [
     id: 301,
     title: "Strange Clues",
     description: "You discover something mysterious...",
-    choices: ["Investigate further", "Report to authorities", "Keep it secret"],
+    choices: [
+      {
+        text: "Investigate further",
+        routeEffects: { mystery: 2 }, // Strong mystery pursuit
+      },
+      {
+        text: "Report to authorities",
+        routeEffects: { friendship: 1, action: 1 }, // Responsible, action-oriented
+      },
+      {
+        text: "Keep it secret",
+        routeEffects: { mystery: 1, romance: 1 }, // Secretive, could create intimate moments
+      },
+    ],
     category: "mystery",
   },
 ];
@@ -73,7 +160,20 @@ const actionScenes: QueueScene[] = [
     id: 401,
     title: "Epic Battle",
     description: "A fierce confrontation awaits!",
-    choices: ["Fight bravely", "Use strategy", "Retreat tactically"],
+    choices: [
+      {
+        text: "Fight bravely",
+        routeEffects: { action: 2 }, // Strong action choice
+      },
+      {
+        text: "Use strategy",
+        routeEffects: { action: 1, mystery: 1 }, // Action with thoughtful approach
+      },
+      {
+        text: "Retreat tactically",
+        routeEffects: { mystery: 1, friendship: 1 }, // Cautious, protective of others
+      },
+    ],
     category: "action",
   },
 ];

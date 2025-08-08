@@ -30,24 +30,14 @@ export default function TestComponent({ onGameComplete }: TestComponentProps) {
     const handleChoiceClick = (choiceIndex: number) => {
         if (!currentScene) return;
 
-        // Award route points based on choice (example logic)
-        switch (choiceIndex) {
-            case 0:
-                // First choices tend to be bold/action-oriented
-                addRoutePoints('action', 1);
-                break;
-            case 1:
-                // Second choices tend to be friendly/social
-                addRoutePoints('friendship', 1);
-                break;
-            case 2:
-                // Third choices tend to be cautious/mysterious
-                addRoutePoints('mystery', 1);
-                break;
-            default:
-                // Default fallback
-                addRoutePoints('romance', 1);
-        }
+        // Get the selected choice object
+        const selectedChoice = currentScene.choices[choiceIndex];
+        if (!selectedChoice) return;
+
+        // Apply route effects from the choice
+        Object.entries(selectedChoice.routeEffects).forEach(([route, points]) => {
+            addRoutePoints(route as any, points); // Apply each route effect
+        });
 
         // Track that a choice was made
         incrementChoiceCount();
@@ -173,7 +163,7 @@ export default function TestComponent({ onGameComplete }: TestComponentProps) {
                             className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg text-left transition-colors duration-200 border-l-4 border-blue-500"
                         >
                             <span className="text-blue-400 mr-2">👉</span>
-                            {choice}
+                            {choice.text}
                         </button>
                     ))}
                 </div>
