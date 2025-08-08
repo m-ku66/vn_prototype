@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { Player } from "../types/gameTypes";
 import { useSceneManager } from "./sceneManager";
 
 // Define the different routes that players can accumulate points toward
@@ -9,14 +10,41 @@ export type RouteType =
   | "mystery"
   | "action";
 
+// App phase management for controlling overall game flow
+export type AppPhase = "setup" | "playing" | "paused" | "menu" | "complete";
+
+// Player attribute keys for type safety
+export type PlayerAttribute = keyof Player;
+
 // Game state interface for type safety
 type GameState = {
+  // App phase management
+  currentPhase: AppPhase;
+
+  // Player information
+  player: Player;
+
   // Points toward different story routes
   // Each route type has a numerical value that increases based on player choices
   routePoints: Record<RouteType, number>;
 
   // Track total choices made (useful for analytics or achievements later)
   totalChoicesMade: number;
+
+  // App phase management actions
+  setAppPhase: (phase: AppPhase) => void;
+  getAppPhase: () => AppPhase;
+
+  // Player management actions
+  setPlayer: <K extends PlayerAttribute>(
+    attribute: K,
+    value: Player[K]
+  ) => void;
+
+  // Overloaded getPlayer function
+  getPlayer(): Player;
+  getPlayer<K extends PlayerAttribute>(attribute: K): Player[K];
+  getPlayer<K extends PlayerAttribute>(attribute?: K): Player | Player[K];
 
   // Actions for managing the game state
   addRoutePoints: (route: RouteType, points: number) => void;
@@ -43,11 +71,51 @@ const initialRoutePoints: Record<RouteType, number> = {
   action: 0,
 };
 
+// Initial player state - we'll set a default age and empty name
+const initialPlayer: Player = {
+  name: "",
+  age: 18, // Default age as you mentioned
+};
+
 // Create the game state store using Zustand
 export const useGameState = create<GameState>((set, get) => ({
   // Initial values
+  currentPhase: "setup", // Start with player setup
+  player: { ...initialPlayer },
   routePoints: { ...initialRoutePoints },
   totalChoicesMade: 0,
+
+  // App phase management
+  setAppPhase: (phase: AppPhase) => {
+    set({ currentPhase: phase });
+  },
+
+  getAppPhase: () => {
+    return get().currentPhase;
+  },
+
+  // Set a specific player attribute
+  setPlayer: <K extends PlayerAttribute>(attribute: K, value: Player[K]) => {
+    set((state) => ({
+      player: {
+        ...state.player,
+        [attribute]: value,
+      },
+    }));
+  },
+
+  // Get player info - overloaded to return full object or specific attribute
+  getPlayer: <K extends PlayerAttribute>(attribute?: K) => {
+    const { player } = get();
+
+    // If no attribute specified, return the full player object
+    if (attribute === undefined) {
+      return player;
+    }
+
+    // Otherwise return the specific attribute
+    return player[attribute];
+  },
 
   // Add points to a specific route based on player choices
   addRoutePoints: (route: RouteType, points: number) => {
@@ -98,9 +166,11 @@ export const useGameState = create<GameState>((set, get) => ({
     return useSceneManager.getState().currentScene;
   },
 
-  // Reset game state (but leave scene navigation to scene manager)
+  // Reset game state completely (including player info and app phase)
   resetGameState: () => {
     set({
+      currentPhase: "setup", // Reset back to setup phase
+      player: { ...initialPlayer },
       routePoints: { ...initialRoutePoints },
       totalChoicesMade: 0,
     });

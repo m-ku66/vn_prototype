@@ -1,7 +1,11 @@
 import { useSceneManager } from "../game_logic/sceneManager";
 import { useGameState } from "../game_logic/gameState";
 
-export default function TestComponent() {
+interface TestComponentProps {
+    onGameComplete?: () => void; // Optional callback for when game ends
+}
+
+export default function TestComponent({ onGameComplete }: TestComponentProps) {
     const {
         currentScene,
         goToNextScene,
@@ -15,7 +19,12 @@ export default function TestComponent() {
         incrementChoiceCount,
         getLeadingRoute,
         resetGameState,
+        getPlayer, // Get player info to personalize the experience
     } = useGameState();
+
+    // Get player info for personalization
+    const playerName = getPlayer("name");
+    const player = getPlayer(); // Full player object for display
 
     // Handle player choice selection
     const handleChoiceClick = (choiceIndex: number) => {
@@ -58,6 +67,16 @@ export default function TestComponent() {
         resetGameState();
     };
 
+    // Handle play again (calls the onGameComplete callback)
+    const handlePlayAgain = () => {
+        if (onGameComplete) {
+            onGameComplete(); // This will trigger the app to go back to setup
+        } else {
+            // Fallback if no callback provided
+            handleReset();
+        }
+    };
+
     // Get debug info
     const leadingRoute = getLeadingRoute();
     const queueInfo = getQueueInfo();
@@ -67,10 +86,17 @@ export default function TestComponent() {
         return (
             <div className="container max-w-full h-screen flex flex-col items-center justify-center bg-black text-white p-4">
                 <h1 className="text-4xl font-bold mb-4">🎉 Story Complete! 🎉</h1>
-                <p className="text-xl mb-6">You've reached the end of this route!</p>
+                <p className="text-xl mb-6">
+                    Congratulations, <strong>{playerName}</strong>! You've reached the end of this route!
+                </p>
                 <p className="text-lg mb-4">Final Route: <strong>{leadingRoute || 'Balanced'}</strong></p>
+                <div className="bg-gray-800 rounded-lg p-4 mb-6">
+                    <h3 className="text-lg font-semibold mb-2">Your Character</h3>
+                    <p><strong>Name:</strong> {player.name}</p>
+                    <p><strong>Age:</strong> {player.age}</p>
+                </div>
                 <button
-                    onClick={handleReset}
+                    onClick={handlePlayAgain}
                     className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded text-lg"
                 >
                     Play Again
@@ -81,13 +107,31 @@ export default function TestComponent() {
 
     return (
         <div className="container max-w-full h-screen flex flex-col items-center justify-center bg-black text-white p-4">
+            {/* Player Info Header */}
+            <div className="bg-gray-900 rounded-lg p-4 mb-4 w-full max-w-2xl">
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-lg font-semibold">
+                            Welcome, <span className="text-blue-400">{playerName}</span>!
+                        </h2>
+                        <p className="text-sm text-gray-400">Age {player.age}</p>
+                    </div>
+                    <div className="text-right text-sm text-gray-400">
+                        Leading Route: <span className="text-yellow-300">{leadingRoute || 'Balanced'}</span>
+                    </div>
+                </div>
+            </div>
+
             {/* Scene Content */}
             <div className="text-center mb-6">
                 <h1 className="text-4xl font-bold mb-2">{currentScene.title}</h1>
                 <p className="text-sm text-gray-400 mb-4">
                     {currentScene.category} route • ID: {currentScene.id}
                 </p>
-                <p className="text-xl mb-6 max-w-2xl">{currentScene.description}</p>
+                <p className="text-xl mb-6 max-w-2xl">
+                    {/* Personalize the description by replacing "You" with player name occasionally */}
+                    {currentScene.description.replace(/^You/, playerName)}
+                </p>
             </div>
 
             {/* Route Progress Display */}
@@ -120,7 +164,7 @@ export default function TestComponent() {
 
             {/* Interactive Choices */}
             <div className="mb-6 w-full max-w-2xl">
-                <h3 className="text-xl font-semibold mb-4 text-center">What do you do?</h3>
+                <h3 className="text-xl font-semibold mb-4 text-center">What do you do, {playerName}?</h3>
                 <div className="grid gap-3">
                     {currentScene.choices.map((choice, index) => (
                         <button
@@ -158,6 +202,12 @@ export default function TestComponent() {
                     Debug Info (Queue has {queueInfo.queue.length} scenes)
                 </summary>
                 <div className="mt-2 bg-gray-900 rounded p-3">
+                    <div className="mb-2">
+                        <strong>Player Info:</strong>
+                        <pre className="text-xs mt-1 bg-black rounded p-2">
+                            {JSON.stringify(player, null, 2)}
+                        </pre>
+                    </div>
                     <div className="mb-2">
                         <strong>Current Scene Queue:</strong>
                         <ul className="ml-4 mt-1">
