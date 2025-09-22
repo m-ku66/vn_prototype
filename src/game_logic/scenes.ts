@@ -21,11 +21,11 @@ const mainStoryScenes: QueueScene[] = [
         choices: [
           {
             text: "I'm ready to begin!",
-            routeEffects: {}, // Neutral choice - no route effects
+            routeEffects: { action: 1 }, // Neutral choice - no route effects
           },
           {
-            text: "Maybe another time...",
-            routeEffects: {}, // Neutral choice - no route effects
+            text: "Guess I'll see where this goes...",
+            routeEffects: { mystery: 1 }, // Neutral choice - no route effects
           },
         ],
       },
@@ -55,7 +55,7 @@ const mainStoryScenes: QueueScene[] = [
             routeEffects: { mystery: 1 }, // Cautious, exploring unknown
           },
           {
-            text: "Stay here and observe for a while",
+            text: "Stay here and observe for a while before deciding",
             routeEffects: { friendship: 1 }, // Thoughtful, patient approach
           },
         ],
@@ -66,14 +66,38 @@ const mainStoryScenes: QueueScene[] = [
   {
     id: 3,
     title: "The Peaceful Village",
-    characters: ["Village Elder", "Innkeeper", "Mysterious Traveler"],
+    characters: ["Village Elder"],
     slides: [
       {
-        text: "After hours of walking, you emerge from the forest to find a quaint village nestled in a valley. Warm light spills from cottage windows, and the scent of freshly baked bread fills the air.",
+        text: "After hours of exploring, you emerge from the forest to find a quaint village nestled in a valley. Warm light spills from cottage windows, and the scent of freshly baked bread fills the air.",
+      },
+      {
+        text: "Villagers go about their evening routines, greeting each other with smiles and laughter. It seems like a safe haven after the eerie forest.",
+      },
+      {
+        text: "You decide to wander around the village, looking for a place to rest when you're approached by...",
       },
       {
         speaker: "Village Elder",
         text: "Welcome, traveler! We don't get many visitors here. You look like you've come a long way.",
+      },
+      {
+        text: "I nod in greeting, feeling a bit weary but relieved to be in a friendly place.",
+      },
+      {
+        speaker: "Village Elder",
+        text: "You didn't travel through that big dark forest on your own, did you? That place is full of monsters and mystery!",
+      },
+      {
+        text: "I shrug. I guess I was lucky to make it through the forest in one piece, despite the lack of trouble I encountered.",
+      },
+      {
+        speaker: "Village Elder",
+        text: "That's impressive for a single traveler! Most folks avoid that forest entirely. You must be quite brave.",
+      },
+      {
+        speaker: "Village Elder",
+        text: "Please, feel free to rest here in our village. We have a cozy inn and friendly people. You look like you could use some company after your journey.",
       },
       {
         text: "The village elder's kind smile puts you at ease. This seems like a safe place to rest, but you notice other interesting people around as well.",
@@ -87,11 +111,11 @@ const mainStoryScenes: QueueScene[] = [
           },
           {
             text: "Visit the cozy inn for the evening",
-            routeEffects: { romance: 1 }, // Could lead to romantic encounters
+            routeEffects: { romance: 2 }, // Could lead to romantic encounters
           },
           {
             text: "Continue your journey without delay",
-            routeEffects: { action: 1 }, // Keep moving, action-oriented
+            routeEffects: { action: 2 }, // Keep moving, action-oriented
           },
         ],
       },
@@ -103,37 +127,30 @@ const mainStoryScenes: QueueScene[] = [
 const romanceScenes: QueueScene[] = [
   {
     id: 101,
-    title: "Starlit Picnic",
-    characters: ["Your Love Interest"],
+    title: "Chance Encounter",
+    characters: ["Hilda"],
     slides: [
       {
-        text: "You and your companion have found a perfect spot on a hilltop overlooking the village below. A blanket is spread between you, and the night sky sparkles with countless stars.",
+        text: "While walking to your next destination, you bump into someone unexpectedly. It's a young woman with a radiant smile and sparkling eyes.",
       },
       {
-        speaker: "Your Love Interest",
-        text: "I've never seen stars this beautiful before... Thank you for bringing me here.",
+        speaker: "Hilda",
+        text: "Oop! Sorry about that! I wasn't paying attention...",
       },
       {
-        text: "There's something magical about this moment. The gentle breeze, the starlight, and the person beside you create an atmosphere of pure romance.",
-      },
-      {
-        speaker: "Your Love Interest",
-        text: "I'm so glad we're here together...",
-      },
-      {
-        text: "Your heart races as you feel the connection between you growing stronger. How do you respond to this intimate moment?",
+        text: "How do you react to this chance encounter?",
         choices: [
           {
-            text: "Lean in for a tender kiss",
-            routeEffects: { romance: 2 }, // Strong romantic choice
+            text: "Get upset at the fact that this woman bumped into you.",
+            routeEffects: { romance: -1 }, // Negative romantic impact
           },
           {
-            text: "Take their hand gently",
+            text: "Laugh it off and introduce yourself.",
             routeEffects: { romance: 1, friendship: 1 }, // Romantic but also friendship
           },
           {
-            text: "Share your dreams for the future together",
-            routeEffects: { romance: 1 }, // Romantic commitment
+            text: "Stare into her eyes and compliment her beauty.",
+            routeEffects: { romance: 2 }, // Romantic commitment
           },
         ],
       },
@@ -143,40 +160,29 @@ const romanceScenes: QueueScene[] = [
   {
     id: 102,
     title: "A Heartfelt Confession",
-    characters: ["Your Love Interest"],
+    characters: ["Hilda"],
     slides: [
       {
-        speaker: "Your Love Interest",
-        text: "I... I need to tell you something important. I've been thinking about this for so long.",
+        speaker: "Hilda",
+        text: "Haha, well, I'm Hilda. It's really nice to meet you! I work at the inn around the corner.",
       },
       {
-        text: "You can see the nervousness in their eyes, but also a deep sincerity. Your heart starts beating faster.",
+        text: "You can see the nervousness in her eyes, but also a deep sincerity. It could be a coincidence that you bumped into her, or something more significant.",
       },
       {
-        speaker: "Your Love Interest",
-        text: "I think... no, I know... I'm falling in love with you.",
-      },
-      {
-        text: "The words hang in the air between you, heavy with meaning. This is the moment you've both been building toward.",
-      },
-      {
-        speaker: "Your Love Interest",
-        text: "I understand if you need time to think, but I had to tell you how I feel.",
-      },
-      {
-        text: "Your response will change everything between you. What does your heart tell you to say?",
+        text: "What would you like to do next?",
         choices: [
           {
-            text: "I love you too",
-            routeEffects: { romance: 3 }, // Very strong romantic choice
+            text: "Tell Hilda that you're headed to the inn. Maybe you can walk together.",
+            routeEffects: { romance: 2 }, // Very strong romantic choice
           },
           {
-            text: "I need more time to figure out my feelings",
+            text: "Nod and head to the inn alone. You can meet her there later.",
             routeEffects: { friendship: 1, mystery: 1 }, // Cautious, keeps options open
           },
           {
-            text: "I care about you, but as a dear friend",
-            routeEffects: { friendship: 2, romance: -1 }, // Friendship boost, romance penalty
+            text: "Change your plans of heading to the inn. Maybe explore the town instead.",
+            routeEffects: { friendship: -2, romance: -2, action: 1 }, // Friendship boost, romance penalty
           },
         ],
       },
